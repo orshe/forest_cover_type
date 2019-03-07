@@ -1,8 +1,6 @@
-import itertools
-
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
 
 # https://www.kaggle.com/c/forest-cover-type-kernels-only
@@ -45,9 +43,10 @@ corrmat = df_train.drop(['Wilderness_Area1',
                          'Soil_Type31', 'Soil_Type32', 'Soil_Type33', 'Soil_Type34',
                          'Soil_Type35', 'Soil_Type36', 'Soil_Type37', 'Soil_Type38',
                          'Soil_Type39', 'Soil_Type40'], axis=1).corr()
-#f, ax = plt.subplots()
-#sns.heatmap(corrmat, vmax=.8, square=True, cmap="Greens")
-# plt.show()
+
+f, ax = plt.subplots()
+sns.heatmap(corrmat, vmax=.8, square=True, cmap="Greens")
+plt.show()
 
 # Correlation values
 data = corrmat
@@ -77,10 +76,10 @@ df_correlations = get_top_abs_correlations(data, 12)
 print(df_correlations)
 
 for x, y in df_correlations.axes[0].tolist():
-#    sns.pairplot(data=df_train, hue='Cover_Type', x_vars=x, y_vars=y, palette="Set2")
-#    plt.show()
+    sns.pairplot(data=df_train, hue='Cover_Type', x_vars=x, y_vars=y, palette="Set2")
+    plt.show()
 
-    sns.lmplot(x=x, y=y, hue='Cover_Type', data=df_train, lowess=True)
+    sns.lmplot(x=x, y=y, hue='Cover_Type', data=df_train, markers='o', palette="Set2", lowess=True)
     plt.show()
 
 
