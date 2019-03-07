@@ -1,3 +1,5 @@
+import itertools
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,6 +13,8 @@ df_train = df_train.drop(['Id'], axis=1)
 
 df_train['Absolute_Distance_To_Hydrology'] = (df_train['Horizontal_Distance_To_Hydrology'] ** 2 + df_train['Vertical_Distance_To_Hydrology'] ** 2) ** 0.5
 df_train['Absolute_Distance_To_Hydrology'] = df_train['Absolute_Distance_To_Hydrology'].astype(int)
+df_train['Rise'] = df_train['Elevation'] * np.sin(df_train['Slope'] * np.pi / 180.0)
+df_train['Rise'] = df_train['Rise'].astype(int)
 
 print(df_train.sample(5))
 
@@ -41,13 +45,12 @@ corrmat = df_train.drop(['Wilderness_Area1',
                          'Soil_Type31', 'Soil_Type32', 'Soil_Type33', 'Soil_Type34',
                          'Soil_Type35', 'Soil_Type36', 'Soil_Type37', 'Soil_Type38',
                          'Soil_Type39', 'Soil_Type40'], axis=1).corr()
-f, ax = plt.subplots()
-sns.heatmap(corrmat, vmax=.8, square=True, cmap="Greens")
-plt.show()
+#f, ax = plt.subplots()
+#sns.heatmap(corrmat, vmax=.8, square=True, cmap="Greens")
+# plt.show()
 
 # Correlation values
-size = 11
-data = df_train.iloc[:, :size]
+data = corrmat
 
 # Calculate the correlation coefficients for all combinations
 print(data.corr())
@@ -62,13 +65,24 @@ def get_redundant_pairs(data):
             pairs_to_drop.add((cols[i], cols[j]))
     return pairs_to_drop
 
+
 def get_top_abs_correlations(data, n=5):
     au_corr = data.corr().abs().unstack()
     labels_to_drop = get_redundant_pairs(data)
     au_corr = au_corr.drop(labels=labels_to_drop).sort_values(ascending=False)
     return au_corr[0:n]
 
-print(get_top_abs_correlations(data))
+
+df_correlations = get_top_abs_correlations(data, 12)
+print(df_correlations)
+
+for x, y in df_correlations.axes[0].tolist():
+#    sns.pairplot(data=df_train, hue='Cover_Type', x_vars=x, y_vars=y, palette="Set2")
+#    plt.show()
+
+    sns.lmplot(x=x, y=y, hue='Cover_Type', data=df_train, lowess=True)
+    plt.show()
+
 
 
 
