@@ -38,7 +38,10 @@ See further details on Kaggle.
 .. requirements, what file does what .. 
 To get accuracy scores with baseline method:
 
-	python3 main.py -b --runs 1000
+	 python3 main.py --debug
+	 
+	 Arguments:
+	    --debug : print debug messages 
 
 
 ## Experimenting with past solutions
