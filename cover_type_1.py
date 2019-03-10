@@ -5,8 +5,6 @@ import pandas as pd
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# https://www.kaggle.com/c/forest-cover-type-kernels-only
-
 df_train = pd.read_csv('./train.csv')
 df_test = pd.read_csv('./test.csv')
 df_train = df_train.drop(['Id'], axis=1)
