@@ -3,8 +3,8 @@ import pandas as pd
 
 
 def preprocess_data():
-    df_train = pd.read_csv('../data/train.csv')
-    df_test = pd.read_csv('../data/test.csv')
+    df_train = pd.read_csv('data/train.csv')
+    df_test = pd.read_csv('data/test.csv')
     df_train = df_train.drop(['Id'], axis=1)
 
     df_train['Absolute_Distance_To_Hydrology'] = (df_train['Horizontal_Distance_To_Hydrology'] ** 2 + df_train[
