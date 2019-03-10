@@ -2,6 +2,13 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from sklearn import model_selection
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -73,6 +80,15 @@ def get_top_abs_correlations(data, n=5):
     return au_corr[0:n]
 
 
+def evaluate_models(models, X, Y, scoring = 'accuracy'):
+    results = []
+    for name, model in models:
+        kfold = model_selection.KFold(n_splits=10, random_state=12345)
+        cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
+        results.append((name, cv_results))
+        return results
+
+
 df_correlations = get_top_abs_correlations(data, 12)
 print(df_correlations)
 
@@ -84,38 +100,23 @@ print(df_correlations)
 #     plt.show()
 
 # Compare the models -> which one gives the best accuracy with our data
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.svm import SVC
-from sklearn.naive_bayes import GaussianNB
-
-from sklearn import model_selection
 
 # prepare models
-models = []
-models.append(('DT', DecisionTreeClassifier()))
-models.append(('RFC', RandomForestClassifier()))
-models.append(('LR', LogisticRegression()))
-models.append(('ETC', ExtraTreesClassifier()))
-models.append(('SVM', SVC()))
-models.append(('GB', GaussianNB()))
+models = [('DT', DecisionTreeClassifier()),
+          ('RFC', RandomForestClassifier()),
+          ('LR', LogisticRegression()),
+          ('ETC', ExtraTreesClassifier()),
+          ('SVM', SVC()),
+          ('GB', GaussianNB())]
 
 X = df_train.drop(['Cover_Type'], axis=1)
 Y = df_train['Cover_Type']
 
 # evaluate each model in turn
-results = []
-names = []
-scoring = 'accuracy'
-for name, model in models:
-    kfold = model_selection.KFold(n_splits=10, random_state=12345)
-    cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
-    results.append(cv_results)
-    names.append(name)
-    msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-    print(msg)
+results = evaluate_models(models, X, Y)
+
+for name, results in results:
+    msg = "%s: %f (%f)" % (name, results.mean(), results.std())
 
 # DT: 0.716071 (0.049579)
 # RFC: 0.765212 (0.046407)
