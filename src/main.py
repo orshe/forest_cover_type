@@ -8,28 +8,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 
-from src.preprocess import preprocess_data
+from src.preprocess import preprocess_data, get_top_abs_correlations
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 pd.set_option('display.max_columns', None)
-
-
-def get_redundant_pairs(data):
-    """Get diagonal and lower triangular pairs of correlation matrix"""
-    pairs_to_drop = set()
-    cols = data.columns
-    for i in range(0, data.shape[1]):
-        for j in range(0, i + 1):
-            pairs_to_drop.add((cols[i], cols[j]))
-    return pairs_to_drop
-
-
-def get_top_abs_correlations(data, n=5):
-    au_corr = data.corr().abs().unstack()
-    labels_to_drop = get_redundant_pairs(data)
-    au_corr = au_corr.drop(labels=labels_to_drop).sort_values(ascending=False)
-    return au_corr[0:n]
 
 
 def evaluate_models(models, X, Y, scoring='accuracy'):
@@ -51,20 +34,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # loading data
     df_train, df_test = preprocess_data()
 
-    data = df_train[['Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology',
-                     'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways',
-                     'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm',
-                     'Horizontal_Distance_To_Fire_Points', 'Cover_Type',
-                     'Absolute_Distance_To_Hydrology', 'Rise']].corr()
-
-    # Calculate the correlation coefficients for all combinations
-    if args.debug:
-        print(data.corr())
-
-    df_correlations = get_top_abs_correlations(data, 12)
+    df_correlations = get_top_abs_correlations(df_train)
     if args.debug:
         print(df_correlations)
 
