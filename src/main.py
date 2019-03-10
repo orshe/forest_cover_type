@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 
-from preprocess import preprocess_data
+from src.preprocess import preprocess_data
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
