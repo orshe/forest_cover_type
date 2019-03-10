@@ -80,13 +80,14 @@ def get_top_abs_correlations(data, n=5):
     return au_corr[0:n]
 
 
-def evaluate_models(models, X, Y, scoring = 'accuracy'):
+def evaluate_models(models, X, Y, scoring='accuracy'):
     results = []
     for name, model in models:
         kfold = model_selection.KFold(n_splits=10, random_state=12345)
         cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
         results.append((name, cv_results))
-        return results
+
+    return results
 
 
 df_correlations = get_top_abs_correlations(data, 12)
@@ -116,7 +117,7 @@ Y = df_train['Cover_Type']
 results = evaluate_models(models, X, Y)
 
 for name, results in results:
-    msg = "%s: %f (%f)" % (name, results.mean(), results.std())
+    print(f"{name}: {results.mean()}({results.std()})")
 
 # DT: 0.716071 (0.049579)
 # RFC: 0.765212 (0.046407)
