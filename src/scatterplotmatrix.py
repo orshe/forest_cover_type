@@ -1,4 +1,6 @@
 # Scatterplots of aspect, slope and hillshade. This can be helpful to spot structured relationships between input variables.
+from pandas.plotting import scatter_matrix
+
 df_9am = df.drop(columns = ['Elevation', 'Horizontal_Distance_To_Hydrology',
            'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways',
            'Horizontal_Distance_To_Fire_Points', 'Wilderness_Area1',
